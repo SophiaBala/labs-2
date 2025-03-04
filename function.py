@@ -2,10 +2,10 @@ def zigzag(matrix):
     rows, cols = len(matrix), len(matrix[0])
     result = []
 
-    for sum_idx in range(rows + cols - 2,):
+    for sum_idx in range(rows + cols - 1):
         if sum_idx % 2 == 0:
             row = min(sum_idx, rows - 1)
-            col = cols - 1 - (sum_idx - row)
+            col = sum_idx - row
             while row >= 0 and col < cols:
                 result.append(matrix[row][col])
                 row -= 1
@@ -13,7 +13,7 @@ def zigzag(matrix):
 
         else:
             col = min(sum_idx, cols - 1)
-            row = rows - 1 - (sum_idx - col)
+            row = sum_idx - col
             while col >= 0 and row < rows:
                 result.append(matrix[row][col])
                 row += 1
@@ -26,7 +26,6 @@ matrix5x5 = ([1,2,6,7,15],
              [10,12,18,21,23],
              [11,19,20,24,25])
 
-matrix1 = [[1]]
 
-print(zigzag(matrix1))
 print(zigzag(matrix5x5))
+
