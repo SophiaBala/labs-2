@@ -1,3 +1,6 @@
+
+import unittest
+
 def zigzag(matrix):
     rows, cols = len(matrix), len(matrix[0])
     result = []
@@ -19,13 +22,19 @@ def zigzag(matrix):
                 col -= 1
     return result
 
-matrix5x5 = ([1,2,6,7,15],
-             [3,5,8,14,16],
-             [4,9,13,17,22],
-             [10,12,18,21,23],
-             [11,19,20,24,25])
 
-matrix1 = [[1]]
+class zigzagtest(unittest.TestCase):
 
-print(zigzag(matrix1))
-print(zigzag(matrix5x5))
+    def test_matrix(self):
+        matrix = [
+            [1, 2, 6],
+            [3, 5, 7],
+            [4, 8, 9]
+        ]
+        expected = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        result = zigzag(matrix)
+        self.assertEqual(result, expected)
+
+
+if __name__ == '__main__':
+    unittest.main()
