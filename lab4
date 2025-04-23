@@ -1,0 +1,230 @@
+class TicketNode:
+    def __init__(self, key, passenger, flight, color="red"):
+        self.key = str(key)
+        self.passenger = passenger
+        self.flight = flight
+        self.color = color
+        self.left = None
+        self.right = None
+        self.parent = None
+
+
+class TicketBookingSystem:
+    def __init__(self):
+        self.NIL = TicketNode(None, None, None, "black")
+        self.root = self.NIL
+
+    def insert(self, key, passenger, flight):
+        key = str(key)
+        if self.search(key, print_message=False):
+            print(f"{key} Already existed")
+            return
+
+        new_ticket = TicketNode(key, passenger, flight)
+        new_ticket.left = self.NIL
+        new_ticket.right = self.NIL
+
+        parent = None
+        current = self.root
+
+        while current != self.NIL:
+            parent = current
+            if key < current.key:
+                current = current.left
+            else:
+                current = current.right
+
+        new_ticket.parent = parent
+        if not parent:
+            self.root = new_ticket
+        elif key < parent.key:
+            parent.left = new_ticket
+        else:
+            parent.right = new_ticket
+
+        new_ticket.color = "red"
+        self._fix_insert(new_ticket)
+
+    def _fix_insert(self, node):
+        while node.parent and node.parent.color == "red":
+            if node.parent == node.parent.parent.left:
+                uncle = node.parent.parent.right
+                if uncle and uncle.color == "red":
+                    node.parent.color = "black"
+                    uncle.color = "black"
+                    node.parent.parent.color = "red"
+                    node = node.parent.parent
+                else:
+                    if node == node.parent.right:
+                        node = node.parent
+                        self._rotate_left(node)
+                    node.parent.color = "black"
+                    node.parent.parent.color = "red"
+                    self._rotate_right(node.parent.parent)
+            else:
+                uncle = node.parent.parent.left
+                if uncle and uncle.color == "red":
+                    node.parent.color = "black"
+                    uncle.color = "black"
+                    node.parent.parent.color = "red"
+                    node = node.parent.parent
+                else:
+                    if node == node.parent.left:
+                        node = node.parent
+                        self._rotate_right(node)
+                    node.parent.color = "black"
+                    node.parent.parent.color = "red"
+                    self._rotate_left(node.parent.parent)
+        self.root.color = "black"
+
+    def _rotate_left(self, node):
+        right_child = node.right
+        node.right = right_child.left
+        if right_child.left != self.NIL:
+            right_child.left.parent = node
+        right_child.parent = node.parent
+        if not node.parent:
+            self.root = right_child
+        elif node == node.parent.left:
+            node.parent.left = right_child
+        else:
+            node.parent.right = right_child
+        right_child.left = node
+        node.parent = right_child
+
+    def _rotate_right(self, node):
+        left_child = node.left
+        node.left = left_child.right
+        if left_child.right != self.NIL:
+            left_child.right.parent = node
+        left_child.parent = node.parent
+        if not node.parent:
+            self.root = left_child
+        elif node == node.parent.right:
+            node.parent.right = left_child
+        else:
+            node.parent.left = left_child
+        left_child.right = node
+        node.parent = left_child
+
+    def search(self, key, print_message=True):
+        key = str(key)
+        current = self.root
+        while current != self.NIL and current.key != key:
+            if key < current.key:
+                current = current.left
+            else:
+                current = current.right
+        if current != self.NIL:
+            if print_message:
+                print(f"Found {current.key}, Passanger: {current.passenger}, Fly: {current.flight}")
+            return current
+        else:
+            if print_message:
+                print(f"Key no found. (search) {key}.")
+            return None
+
+    def delete(self, key):
+        node = self.search(key, print_message=False)
+        if node:
+            self._delete_node(node)
+        else:
+            print(f"Key no found. {key}.")
+
+    def _delete_node(self, node):
+        if node.left == self.NIL:
+            self._transplant(node, node.right)
+        elif node.right == self.NIL:
+            self._transplant(node, node.left)
+        else:
+            successor = self._minimum(node.right)
+            if successor.parent != node:
+                self._transplant(successor, successor.right)
+                successor.right = node.right
+                successor.right.parent = successor
+            self._transplant(node, successor)
+            successor.left = node.left
+            successor.left.parent = successor
+            successor.color = node.color
+
+    def _transplant(self, u, v):
+        if u.parent is None:
+            self.root = v
+        elif u == u.parent.left:
+            u.parent.left = v
+        else:
+            u.parent.right = v
+        if v:
+            v.parent = u.parent
+
+    def _minimum(self, node):
+        while node.left != self.NIL:
+            node = node.left
+        return node
+
+    def view_bookings(self):
+        result = []
+        self._inorder(self.root, result)
+        return result
+
+    def _inorder(self, node, result):
+        if node != self.NIL:
+            self._inorder(node.left, result)
+            result.append((node.key, node.passenger, node.flight))
+            self._inorder(node.right, result)
+
+    def visualize_tree(self, node=None, level=0):
+        if node is None:
+            node = self.root
+        if node != self.NIL:
+            self.visualize_tree(node.left, level + 1)
+            print(" " * 4 * level + f"{node.key}")
+            self.visualize_tree(node.right, level + 1)
+
+system = TicketBookingSystem()
+system.insert("ABC123", "Ilove Tiramisu ", "Kyiv")
+system.insert("XF654556", "Hainz Doofenshmirtz", "Lviv")
+system.insert("LKF789", "Sponge Bob", "Odesa")
+
+while True:
+    action = input("Enter the number of the action you'd like to perform: ")
+
+    if action == "add":
+        key = input("Enter ticket ID: ")
+        passenger = input("Enter passenger's name: ")
+        flight = input("Enter flight destination: ")
+        system.insert(key, passenger, flight)
+    elif action == "delete":
+        key = input("Enter ticket ID to delete: ")
+        system.delete(key)
+    elif action == "search":
+        key = input("Enter ticket ID to search: ")
+        system.search(key)
+    elif action == "all":
+        bookings = system.view_bookings()
+        print("Current bookings:")
+        for booking in bookings:
+            print(f"ID: {booking[0]}, Passenger: {booking[1]}, Flight: {booking[2]}")
+    elif action == "ciao":
+        print("Exiting the system. Goodbye!")
+        break
+    elif action == "derevo":
+        system.visualize_tree()
+    else:
+        print("Invalid action. Please try again.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
