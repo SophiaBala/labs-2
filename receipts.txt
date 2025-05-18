@@ -1,0 +1,26 @@
+Diamond Sword: Diamond, Stick
+Furnace: Cobblestone
+Bow: Stick, String
+Bucket: Iron Ingot
+Compass: Iron Ingot, Redstone
+Bed: Planks, Wool
+Map: Paper, Compass
+Torch: Stick, Coal
+Chest: Planks
+Stick: Planks
+Crafting Table: Planks
+Ladder: Stick
+Sign: Planks, Stick
+Item Frame: Stick, Leather
+Painting: Stick, Wool
+Bookshelf: Planks, Book
+Book: Paper, Leather
+Paper: Sugar Cane
+Shield: Iron Ingot, Planks
+Rail: Iron Ingot, Stick
+Powered Rail: Gold Ingot, Redstone, Stick
+Minecart: Iron Ingot
+Hopper: Iron Ingot, Chest
+Lever: Stick, Cobblestone
+Button (Stone): Stone
+Button (Wood): Planks
