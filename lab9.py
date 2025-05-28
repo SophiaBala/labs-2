@@ -19,25 +19,37 @@ for y in range(H):
     ways[y][0] = 1
 
 
-for x in range(W - 1):
-    for y in range(H):
-        value = ways[y][x]
-        if value == 0:
-            continue
+all_same = all(cell == grid[0][0] for row in grid for cell in row)
 
-        current_letter = grid[y][x]
+if all_same:
+    for x in range(W - 1):
+        total = sum(ways[y][x] for y in range(H))
+        for xx in range(x + 1, W):
+            for yy in range(H):
+                ways[yy][xx] += total
 
-        ways[y][x + 1] += value
+else:
+    for x in range(W - 1):
+        for y in range(H):
+            value = ways[y][x]
+            if value == 0:
+                continue
 
-        if y > 0 and grid[y - 1][x + 1] == current_letter:
-            ways[y - 1][x + 1] += value
+            current_letter = grid[y][x]
 
-        if y < H - 1 and grid[y + 1][x + 1] == current_letter:
-            ways[y + 1][x + 1] += value
+            for yy in range(H):
+                for xx in range(x + 2, W):
+                    if grid[yy][xx] == current_letter:
+                        ways[yy][xx] += value
 
-        for xx in range(x + 2, W):
-            if grid[y][xx] == current_letter:
-                ways[y][xx] += value
+            ways[y][x + 1] += value
+
+            if y > 0 and grid[y - 1][x + 1] == current_letter:
+                ways[y - 1][x + 1] += value
+
+            if y < H - 1 and grid[y + 1][x + 1] == current_letter:
+                ways[y + 1][x + 1] += value
+
 
 print("Ways:")
 for row in ways:
@@ -48,4 +60,5 @@ if H == 1:
     result = ways[0][W - 1]
 else:
     result = ways[0][W - 1] + ways[H - 1][W - 1]
+
 print("Amount of ways:", result)
